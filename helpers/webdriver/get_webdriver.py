@@ -11,8 +11,6 @@ from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from webdriver_manager.core.os_manager import ChromeType
 
-
-
 from settings import BROWSER
 
 
@@ -151,8 +149,8 @@ class WebDriver:
             self.options.add_argument("--use-fake-ui-for-media-stream")  # появляется лишь аудио устройство
             self.options.add_argument("--use-fake-device-for-media-stream")
             self.options.add_argument('--allow-file-access-from-files')
-            self.options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36')
-
+            self.options.add_argument(
+                '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36')
 
         if 'use-old-user-agent' in self.params:
             self.options.add_argument(

@@ -1,8 +1,9 @@
 import allure
-from settings import STG
+
 from pages.login_page import LoginPage
 from pages.main_page import MainPage
 from pages.device_page import DevicePage
+from settings import STG
 
 
 @allure.feature("Авторизация и навигация")
@@ -43,5 +44,8 @@ def test_login_and_navigate(driver):
     with allure.step("Нажать кнопку 'Выгрузить отчет'"):
         device_page.press_export_excel()
 
-    with allure.step("123"):
-        asd = 1
+    with allure.step("Ожидание уведомления о готовности отчета"):
+        device_page.wait_notification()
+
+    with allure.step("Скачать файл"):
+        device_page.press_download()

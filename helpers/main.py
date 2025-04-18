@@ -1,93 +1,13 @@
-# Standard library imports
-import pytest
-import datetime
 import time
-import os
-import json
 import logging
-import re
-import base64
 import urllib3
 
 from helpers.browser_logs import BrowserLogs
-from helpers.locator_searcher import LocatorSearcher
-
-# Related third party imports
-
-
-# from Xlib import display, X
-
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common import exceptions as EX
 
-
-# Local application/library specific imports.
-from settings import *
-
-
-
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-
-
-def get_download_path():
-    """Returns the default downloads path for linux or windows"""
-    if os.name == 'nt':
-        import winreg
-        sub_key = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
-        downloads_guid = '{374DE290-123F-4565-9164-39C4925E467B}'
-        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, sub_key) as key:
-            location = winreg.QueryValueEx(key, downloads_guid)[0]
-        return location
-    else:
-        return os.path.join(os.path.expanduser('~'), 'downloads')
-
-
-def get_last_file_path(path, extension):
-    timing = time.time()
-    while time.time() - timing < 10:
-        files = os.listdir(path)
-        paths = [os.path.join(path, basename) for basename in files]
-        try:
-            fullpath = max(paths, key=os.path.getctime)
-            if 'crdownload' in fullpath:
-                pass
-            elif extension in fullpath:
-                return fullpath
-            else:
-                return 'file not found'
-        except FileNotFoundError:
-            pass
-
-
-
-
-
-
-def wait_for_next_tab(drv, tab_count, s=30):
-    timing = time.time()
-    while time.time() - timing < s:
-        handles = drv.window_handles
-        if len(handles) == tab_count:
-            drv.switch_to.window(drv.window_handles[-1])
-            return True
-
-
-def wait_for_alert_and_close_it(driver, s=10):
-    try:
-        # Wait for the alert to be displayed and store it in a variable
-        alert_is_present = WebDriverWait(driver, s).until(EC.alert_is_present())
-        if alert_is_present:
-            alert = driver.switch_to.alert
-            # if alert.text: # получение текста не работает
-            #     if 'Leave site' in alert.text:
-            #         # Press the OK button
-            #         alert.accept()
-            alert.accept()
-    except EX.TimeoutException:
-        pass
 
 
 def wait_until_alert_is_present(drv, s=10):
@@ -95,19 +15,6 @@ def wait_until_alert_is_present(drv, s=10):
         alert_is_present = WebDriverWait(drv, s).until(EC.alert_is_present())
         if alert_is_present:
             return drv.switch_to.alert
-
-    except EX.TimeoutException:
-        pass
-
-
-def wait_for_alert_and_accept_it(drv, s=10):
-    try:
-        # Wait for the alert to be displayed and store it in a variable
-        alert_is_present = WebDriverWait(drv, s).until(EC.alert_is_present())
-        if alert_is_present:
-            alert = drv.switch_to.alert
-            alert.accept()
-            return True
 
     except EX.TimeoutException:
         pass
@@ -190,24 +97,6 @@ def wait_text_in_curr_url(drv, text, endswith=False, s=10):
                     return r
 
 
-
-
-def get_elem_text_by_index(drv, loc, index=0, seconds=10):
-    timing = time.time()
-    while time.time() - timing < seconds:
-        try:
-            elements = drv.find_elements(*loc)
-            # достаточно чтобы строка была непустой
-            if len(elements) != 0 and elements[index].text:
-                return elements[index].text
-
-        except (EX.StaleElementReferenceException, EX.NoSuchElementException):
-            return False
-    else:
-        pass
-
-
-
 def get_elem_by_text(driver, loc, text=None, fullmatch=False, idx=0, s=25):
     timing = time.time()  # конфигурация рабочая, не менять
     while time.time() - timing < s:
@@ -240,10 +129,6 @@ def get_elem_by_text(driver, loc, text=None, fullmatch=False, idx=0, s=25):
             pass
 
 
-
-
-
-
 def wait_until_file_download(drv, s=10):
     drv.get('chrome://downloads/')
     timing = time.time()
@@ -269,27 +154,12 @@ def wait_until_file_download(drv, s=10):
         pass
 
 
-
-
-
 def click_dwnld_and_wait_complete(drv, loc):
     ts = round(time.time() * 1000)
     wait_until_available(drv, loc).click()
     bl = BrowserLogs(drv, ['Page.downloadProgress', '"state":"completed"'], ts=ts)
 
-    return bl.target_storage  # если 0 совпадений, то это False
-
-
-def click_until_it_works_by_script(drv=None, loc=None, s=10):
-    timing = time.time()
-    while time.time() - timing < s:
-        try:
-            drv.execute_script(f'document.querySelector("{loc}").click();')
-            return True
-        except Exception as e:
-            report_error(loc, e)
-    else:
-        pass
+    return bl.target_event
 
 
 def click_until_it_works(drv=None, loc=None, idx=None, s=10):
@@ -369,8 +239,6 @@ def wait_until_text_present_in_element_attribute(drv, loc, attr, text, s=10):
         report_error(loc, e)
 
 
-
-
 def wait_until_display(drv, loc, elems=False, s=10):
     timing = time.time()
     while time.time() - timing < s:
@@ -409,14 +277,10 @@ def wait_until_available(drv, loc, elems=False, s=10):
         pass
 
 
-
-
 def report_error(loc, e):
-    loc = LocatorSearcher(loc)
-    logging.error(f'Element is invisible:\n'
-                  f'Problem locator: {loc} \n'
-                  f'Exception: {e}')
-
+    raise Exception(f'Element is unavailable:\n'
+                    f'Problem locator: {loc} \n'
+                    f'Exception: {e}')
 
 
 def page_load_timeout(drv, wait_for='complete', s=10):
@@ -434,40 +298,3 @@ def page_load_timeout(drv, wait_for='complete', s=10):
         state = drv.execute_script('return document.readyState;')
         if wait_for == state:
             break
-
-
-def time_loop(limit_seconds, *, interval=1):
-    interval = int(interval)
-    start_time = time.time()
-    end_time = start_time + limit_seconds
-    yield 0
-    while time.time() < end_time:
-        if interval > 0:
-            next_time = start_time
-            while next_time < time.time():
-                next_time += interval
-            time.sleep(int(round(next_time - time.time())))
-        yield int(round(time.time() - start_time))
-        if int(round(time.time() + interval)) > int(round(end_time)):
-            return
-
-
-
-def get_test_info(request):
-    testcase = re.findall(r'C[0-9\D\s][^\]]+', str(request.node.name))[0]
-    testsuite = request.node.originalname
-
-    return testsuite, testcase
-
-
-def get_clipboard(driver):
-    timing = time.time()
-    while time.time() - timing < 5:
-        try:
-            result = driver.execute_script('return navigator.clipboard.readText();')
-            if result:
-                return result
-        except:
-            pass
-
-
