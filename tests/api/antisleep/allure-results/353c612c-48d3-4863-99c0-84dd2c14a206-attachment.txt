@@ -1,0 +1,8 @@
+2025-04-25 20:53:30.185 | INFO     | core.logging_utils:autolog:30 - [api_request.py][__init__:23] : https://stage-mgt.antisleep.ru/api/v1.00/public/login
+2025-04-25 20:53:30.186 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : Requesting: POST https://stage-mgt.antisleep.ru/api/v1.00/public/login?email=demo%40&password=Demo1704%40demo.ru
+2025-04-25 20:53:30.281 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : Got response: 422
+2025-04-25 20:53:30.281 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : REQUEST HEADERS: {'accept': 'application/json', 'Content-Type': 'application/json', 'Content-Length': '0'}
+2025-04-25 20:53:30.281 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : REQUEST BODY: None
+2025-04-25 20:53:30.281 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : RESPONSE TIME: 94 ms
+2025-04-25 20:53:30.281 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : RESPONSE HEADERS: {'Server': 'nginx', 'Date': 'Fri, 25 Apr 2025 17:53:30 GMT', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'Cache-Control': 'no-cache, private', 'Set-Cookie': 'cm_stage_session=raRsZX4wNZVfNRsq5DmIlev7nvhT6ELhlvQ4QqUV; expires=Fri, 25 Apr 2025 19:53:30 GMT; Max-Age=7200; path=/; httponly', 'Vary': 'Origin'}
+2025-04-25 20:53:30.281 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : RESPONSE BODY: {"message":"The email must be a valid email address.","errors":{"email":["The email must be a valid email address."]}}

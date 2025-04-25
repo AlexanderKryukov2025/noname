@@ -1,0 +1,18 @@
+2025-04-25 20:53:28.940 | INFO     | core.logging_utils:autolog:30 - [api_request.py][__init__:23] : https://stage-mgt.antisleep.ru/api/v1.00/public/login
+2025-04-25 20:53:28.940 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : Requesting: POST https://stage-mgt.antisleep.ru/api/v1.00/public/login?email=+demo%40demo.ru+&password=+Demo1704%40demo.ru+
+2025-04-25 20:53:29.333 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : Got response: 401
+2025-04-25 20:53:29.333 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : REQUEST HEADERS: {'accept': 'application/json', 'Content-Type': 'application/json', 'Content-Length': '0'}
+2025-04-25 20:53:29.333 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : REQUEST BODY: None
+2025-04-25 20:53:29.333 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : RESPONSE TIME: 391 ms
+2025-04-25 20:53:29.333 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : RESPONSE HEADERS: {'Server': 'nginx', 'Date': 'Fri, 25 Apr 2025 17:53:29 GMT', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'Cache-Control': 'no-cache, private', 'Set-Cookie': 'cm_stage_session=YSGB9DfR7GUSZ7ok6HYRD6DVHEn7tt7bv2ubzCVq; expires=Fri, 25 Apr 2025 19:53:29 GMT; Max-Age=7200; path=/; httponly', 'Vary': 'Origin'}
+2025-04-25 20:53:29.333 | INFO     | core.logging_utils:autolog:30 - [api_request.py][perform:59] : RESPONSE BODY: {"message":"\u041d\u0435\u0432\u0435\u0440\u043d\u043e\u0435 \u0438\u043c\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f \u0438\u043b\u0438 \u043f\u0430\u0440\u043e\u043b\u044c."}
+2025-04-25 20:53:29.343 | ERROR    | core.logging_utils:autolog:30 - [api_request.py][__init__:123] : Request went bad: 401 Unauthorized
+2025-04-25 20:53:29.344 | INFO     | core.logging_utils:autolog:30 - [api_request.py][__init__:123] : Prepared request: 
+Header:
+{'accept': 'application/json', 'Content-Type': 'application/json', 'Content-Length': '0'}
+2025-04-25 20:53:29.344 | INFO     | core.logging_utils:autolog:30 - [api_request.py][__init__:123] : Response:
+{'Server': 'nginx', 'Date': 'Fri, 25 Apr 2025 17:53:29 GMT', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'Cache-Control': 'no-cache, private', 'Set-Cookie': 'cm_stage_session=YSGB9DfR7GUSZ7ok6HYRD6DVHEn7tt7bv2ubzCVq; expires=Fri, 25 Apr 2025 19:53:29 GMT; Max-Age=7200; path=/; httponly', 'Vary': 'Origin'}
+('{"message":"\\u041d\\u0435\\u0432\\u0435\\u0440\\u043d\\u043e\\u0435 '
+ '\\u0438\\u043c\\u044f '
+ '\\u043f\\u043e\\u043b\\u044c\\u0437\\u043e\\u0432\\u0430\\u0442\\u0435\\u043b\\u044f '
+ '\\u0438\\u043b\\u0438 \\u043f\\u0430\\u0440\\u043e\\u043b\\u044c."}')

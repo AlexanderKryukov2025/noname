@@ -1,0 +1,1 @@
+{'name': 'New Name', 'time_zone': 'Asia/Yakutsk', 'sip_number': '12345', 'sip_extension': '67890', 'events_view_type': 1, 'locale': 'en'}
