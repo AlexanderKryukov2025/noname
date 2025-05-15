@@ -1,39 +1,38 @@
 import allure
 
-from selenium.webdriver.common.by import By
-from helpers.main import wait_until_present, wait_until_visible, wait_text_in_curr_url
-from helpers.browser_logs import BrowserLogs
+from .base_page import BasePage
+from pathlib import Path
+from locators import Locators
 
-class DevicePage:
-    def __init__(self, driver):
-        self.driver = driver
-        self.change_toggle_btn = (By.CSS_SELECTOR, '.justify-content-end button')
-        self.popup_close_btn = (By.CSS_SELECTOR, '.modal-dialog button.close')
-        self.export_excel_btn = (By.CSS_SELECTOR, '.card button[name="export"]')
-        self.created_file_csv = (By.CSS_SELECTOR, '.modal-dialog .modal-body a')
+
+class DevicePage(BasePage):
+
+    def __init__(self, page, loc=Locators()):
+        super().__init__(page)
+        self.page = page
+        self.device_loc = loc("device")
 
     @allure.step("Проверить загрузку страницы устройств")
     def check_landing(self):
-        wait_text_in_curr_url(self.driver, '/device', True)
+        self.wait_for_url('/device')
 
     @allure.step("Переключить колонки")
     def switch_columns(self):
-        wait_until_present(self.driver, self.change_toggle_btn).click()
+        self.click_element(self.device_loc['change_toggle_btn'])
 
     @allure.step("Закрыть попап")
     def close_popup(self):
-        wait_until_visible(self.driver, self.popup_close_btn).click()
+        self.click_element(self.device_loc['popup_close_btn'])
 
     @allure.step("Нажать кнопку 'Выгрузить отчет'")
     def press_export_excel(self):
-        wait_until_present(self.driver, self.export_excel_btn).click()
+        self.click_element(self.device_loc['export_excel_btn'])
 
     @allure.step("Ожидание уведомления о готовности отчета")
     def wait_notification(self):
-        assert BrowserLogs(self.driver, ['Network.webSocketFrameReceived', 'user.notification']).target_event
+        self.wait_for_element_visible(self.device_loc['notification_modal'])
 
     @allure.step("Скачать файл")
     def press_download(self):
-        wait_until_visible(self.driver, self.created_file_csv).click()
-        assert BrowserLogs(self.driver, ['Page.downloadProgress', '"state":"completed"']).target_event
-
+        path = self.click_and_wait_download(self.device_loc['created_file_csv'])
+        assert Path(path).is_file(), 'File not found'

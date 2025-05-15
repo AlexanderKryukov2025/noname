@@ -1,21 +1,20 @@
 import allure
 
-from selenium.webdriver.common.by import By
-from helpers.main import get_elem_by_text, wait_text_in_curr_url
+from .base_page import BasePage
+from locators import Locators
 
 
-class MainPage:
-    def __init__(self, driver):
-        self.driver = driver
-        self.menu_items = {'devices': {'en': 'Devices', 'ru': 'Устройства'}, 'vehicles': {'en': 'Vehicles', 'ru': 'ТС'}}
-        self.menu_list = (By.CSS_SELECTOR, 'ul.navbar-nav:not(.navbar-right) li')
-        self.devices_btn_ru = (By.LINK_TEXT, 'Устройства')
-        self.devices_btn_eng = (By.LINK_TEXT, 'Devices')
+class MainPage(BasePage):
+
+    def __init__(self, page, loc=Locators()):
+        super().__init__(page)
+        self.page = page
+        self.login_loc = loc("main")
 
     @allure.step("Проверить загрузку главной страницы")
     def check_landing(self):
-        wait_text_in_curr_url(self.driver, '/client-113', True)
+        self.wait_for_url('/client-113')
 
     @allure.step("Навигация к устройствам")
-    def navigate_to_devices(self, item):
-        get_elem_by_text(self.driver, self.menu_list, item).click()
+    def navigate_to_devices(self):
+        self.click_element_with_text(self.login_loc['tab_links'], 'Devices')

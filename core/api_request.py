@@ -3,12 +3,11 @@ Requests + responses objects for API testing
 """
 import json
 import sys
-from pprint import pprint
-
 import allure
+
+from pprint import pprint
 from jsonmodels.models import Base
 from requests import ReadTimeout, Session, Request, RequestException
-
 from .logging_utils import autolog, LOG_LEVEL
 
 DEFAULT_HEADER = {

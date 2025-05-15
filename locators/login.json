@@ -1,0 +1,7 @@
+{
+    "email_input": "#email",
+    "password_input": "#password",
+    "submit_btn": "[type='submit'].btn"
+
+}
+

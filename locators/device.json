@@ -1,0 +1,7 @@
+{
+    "change_toggle_btn": ".justify-content-end button",
+    "created_file_csv": ".modal-dialog .modal-body a",
+    "export_excel_btn": ".card button[name='export']",
+    "popup_close_btn": ".modal-dialog button.close",
+    "notification_modal": ".notification-modal .modal-content"
+}

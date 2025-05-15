@@ -1,14 +1,10 @@
 import pytest
 
-from helpers.webdriver.get_webdriver import WebDriver1600
 from rest.cluster import Cluster
 
-
-@pytest.fixture
-def driver(request):
-    browser = WebDriver1600().get()
-    yield browser
-    browser.quit()
+def pytest_addoption(parser):
+    parser.addoption('--driver', action='store', default='chromium', help='Browser: chromium, firefox, webkit')
+    parser.addoption('--headless', action='store_true', help='Browser headless-mode')
 
 
 @pytest.fixture(scope='class')
