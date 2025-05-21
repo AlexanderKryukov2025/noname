@@ -17,14 +17,14 @@ def run_browser_session(url, login, password):
         login_page = LoginPage(page)
         main_page = MainPage(page)
         device_page = DevicePage(page)
-        url_provider = UrlProvider(page, url)
+        # url_provider = UrlProvider(page, url)
 
         # Выполняем последовательность действий синхронно
-        run_pages_sequence(url, login, password, login_page, main_page, device_page, url_provider)
+        run_pages_sequence(url, login, password, login_page, main_page, device_page)
 
 
-def run_pages_sequence(url, login, password, login_page, main_page, device_page, url_provider):
-    a = url_provider.get_driver_events_url()
+def run_pages_sequence(url, login, password, login_page, main_page, device_page):
+    # a = url_provider.device_type_event()
     login_page.open_page(url)
     login_page.verify_language()
     login_page.enter_email(login)

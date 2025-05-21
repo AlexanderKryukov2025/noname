@@ -1,20 +1,18 @@
 from urllib.parse import urlencode
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
-from pages.sync_page import SyncPage
 
 class UrlBuilder:
     def build_event_url(
         self,
         base_url="https://.../event",
-        filter_set=None,
-        client_id=None,
         date_from=None,
+        date_to=None,
         date_from_hour=None,
         date_from_minute=None,
-        date_to=None,
         date_to_hour=None,
         date_to_minute=None,
+        filter_set=None,
+        client_id=None,
         driver_uid=None,
         event_id=None,
         external_driver_id=None,
@@ -22,226 +20,195 @@ class UrlBuilder:
         type_list=None,
         data=None
     ):
-        # Создаем словарь параметров
         params = {}
 
-        if filter_set is not None:
-            params['filter_set'] = filter_set
-        if client_id is not None:
-            params['client_id'] = client_id
-        if date_from is not None:
-            params['date_from'] = date_from
-        if date_from_hour is not None:
-            params['date_from_hour'] = date_from_hour
-        if date_from_minute is not None:
-            params['date_from_minute'] = date_from_minute
-        if date_to is not None:
-            params['date_to'] = date_to
-        if date_to_hour is not None:
-            params['date_to_hour'] = date_to_hour
-        if date_to_minute is not None:
-            params['date_to_minute'] = date_to_minute
-        if driver_uid is not None:
-            params['driver_uid'] = driver_uid
-        if event_id is not None:
-            params['event_id'] = event_id
-        if external_driver_id is not None:
-            params['external_driver_id'] = external_driver_id
-        if device_type is not None:
-            params['device_type'] = device_type
+        # Объединённое добавление параметров
+        for key, value in [
+            ('date_from', date_from),
+            ('date_to', date_to),
+            ('date_from_hour', date_from_hour),
+            ('date_from_minute', date_from_minute),
+            ('date_to_hour', date_to_hour),
+            ('date_to_minute', date_to_minute),
+            ('filter_set', filter_set),
+            ('client_id', client_id),
+            ('driver_uid', driver_uid),
+            ('event_id', event_id),
+            ('external_driver_id', external_driver_id),
+            ('device_type', device_type),
+            ('data', data)
+        ]:
+            if value is not None:
+                params[key] = value
+
+        # Обработка type_list
         if type_list:
-            # Передаем список типов как multiple values
-            for t in type_list:
-                # Используем ключ 'type[]'
-                params.setdefault('type[]', []).append(t)
-        if data is not None:
-            params['data'] = data
+            params['type[]'] = type_list
 
-        # Собираем список пар ключ-значение
-        query_parts = []
-        for key, value in params.items():
-            if isinstance(value, list):
-                for v in value:
-                    query_parts.append((key, v))
-            else:
-                query_parts.append((key, value))
+        # Кодируем параметры
+        query_string = urlencode(params, doseq=True, safe='+')
+        return f"{base_url}?{query_string}"
 
-        # Кодируем параметры, оставляя '+' как есть
-        query_string = urlencode(query_parts, doseq=True, safe='+')
+class UrlParams:
+    def __init__(self, base_url, builder):
+        self._base_url = base_url
+        self._builder = builder
+        self._params = {}
+        self._type_list = []
 
-        # Формируем полный URL
-        url = f"{base_url}?{query_string}"
-        return url
+    def set_params(self, **kwargs):
+        for key, value in kwargs.items():
+            if value is not None:
+                if key == 'type_list':
+                    self._type_list.extend(value)
+                else:
+                    self._params[key] = value
+        return self
 
-class PredefinedUrls:
-    def __init__(self, url_builder, default_url):
-        self.builder = url_builder
+    def build(self):
+        return self._builder.build_event_url(
+            base_url=self._base_url,
+            **self._params,
+            type_list=self._type_list
+        )
+
+class UrlProvider:
+    def __init__(self, default_url):
         self._default_url = default_url
+        self._builder = UrlBuilder()
 
-    def default(self, url=None):
-        return self.builder.build_event_url(base_url=url or self._default_url)
+    def _get_date_range(self, start_date: datetime, end_date: datetime):
+        date_from = '+' + start_date.strftime("%d.%m.%Y") + '+'
+        date_to = '+' + end_date.strftime("%d.%m.%Y") + '+'
+        return {
+            'date_from': date_from,
+            'date_to': date_to,
+            'date_from_hour': 00,
+            'date_from_minute': 00,
+            'date_to_hour': 23,
+            'date_to_minute': 59,
 
-    def driver_events(self, url=None):
-        return self.builder.build_event_url(
-            base_url=url or self._default_url,
-            driver_uid="driver123",
-            date_from="+01.01.2024+",
-            date_to="+28.02.2024+",
-            type_list=[26, 27],
-            data=2
-        )
+            # 'date_from_hour': str(int(start_date.strftime("%H"))),
+            # 'date_from_minute': str(int(start_date.strftime("%M"))),
+            # 'date_to_hour': end_date.strftime("%H"),
+            # 'date_to_minute': str(int(end_date.strftime("%M"))),
+        }
 
-    def device_type_event(self, url=None):
-        return self.builder.build_event_url(
-            base_url=url or self._default_url,
-            device_type="mobile",
-            date_from="+01.03.2024+",
-            date_to="+31.03.2024+",
-            type_list=[38, 4],
-            data=3
-        )
-
-    def recent_events(self, url=None):
-        # За последние сутки
-        end = datetime.now()
-        start = end - timedelta(days=1)
-        return self._build_url_with_dates(start, end, url)
-
-    def today(self, url=None):
-        # За сегодня
-        today_date = datetime.now().date()
-        start = datetime.combine(today_date, datetime.min.time())
-        end = datetime.combine(today_date, datetime.max.time())
-        return self._build_url_with_dates(start, end, url)
-
-    def yesterday(self, url=None):
-        # За вчера
-        yesterday_date = (datetime.now() - timedelta(days=1)).date()
-        start = datetime.combine(yesterday_date, datetime.min.time())
-        end = datetime.combine(yesterday_date, datetime.max.time())
-        return self._build_url_with_dates(start, end, url)
-
-    def day_before_yesterday(self, url=None):
-        # За позавчера
-        day_before = (datetime.now() - timedelta(days=2)).date()
-        start = datetime.combine(day_before, datetime.min.time())
-        end = datetime.combine(day_before, datetime.max.time())
-        return self._build_url_with_dates(start, end, url)
-
-    def current_week(self, url=None):
-        # За текущую неделю (понедельник - сегодня)
-        today_date = datetime.now().date()
-        start_of_week = today_date - timedelta(days=today_date.weekday())
-        start = datetime.combine(start_of_week, datetime.min.time())
-        end = datetime.combine(today_date, datetime.max.time())
-        return self._build_url_with_dates(start, end, url)
-
-    def previous_week(self, url=None):
-        # За прошлую неделю
-        today_date = datetime.now().date()
-        start_of_current_week = today_date - timedelta(days=today_date.weekday())
-        start_of_prev_week = start_of_current_week - timedelta(weeks=1)
-        end_of_prev_week = start_of_current_week - timedelta(days=1)
-        start = datetime.combine(start_of_prev_week, datetime.min.time())
-        end = datetime.combine(end_of_prev_week, datetime.max.time())
-        return self._build_url_with_dates(start, end, url)
-
-    def current_month(self, url=None):
-        # За текущий месяц
-        now = datetime.now()
-        start = datetime(now.year, now.month, 1)
-        end = datetime(now.year, now.month,
-                       (start + relativedelta(months=1)) - timedelta(days=1)).replace(
-                           hour=23, minute=59, second=59)
-        return self._build_url_with_dates(start, end, url)
-
-    def past_month(self, url=None):
-        # За прошлый месяц
-        now = datetime.now()
-        start_of_current_month = datetime(now.year, now.month, 1)
-        start_of_prev_month = start_of_current_month - relativedelta(months=1)
-        end_of_prev_month = start_of_current_month - timedelta(days=1)
-        end_of_prev_month = end_of_prev_month.replace(
-            hour=23, minute=59, second=59)
-        start = start_of_prev_month
-        end = end_of_prev_month
-        return self._build_url_with_dates(start, end, url)
-
-    def current_year(self, url=None):
-        # За текущий год
-        now = datetime.now()
-        start = datetime(now.year, 1, 1)
-        end = datetime(now.year, 12, 31, 23, 59, 59)
-        return self._build_url_with_dates(start, end, url)
-
-    def past_year(self, url=None):
-        # За прошлый год
-        now = datetime.now()
-        start = datetime(now.year - 1, 1, 1)
-        end = datetime(now.year - 1, 12, 31, 23, 59, 59)
-        return self._build_url_with_dates(start, end, url)
-
-    def _build_url_with_dates(self, start_dt, end_dt, url=None):
-        date_from = start_dt.strftime("%d.%m.%Y")
-        date_to = end_dt.strftime("%d.%m.%Y")
-        date_from_hour = start_dt.strftime("%H")
-        date_from_minute = start_dt.strftime("%M")
-        date_to_hour = end_dt.strftime("%H")
-        date_to_minute = end_dt.strftime("%M")
-        return self.builder.build_event_url(
-            base_url=url or self._default_url,
-            date_from=date_from,
-            date_from_hour=date_from_hour,
-            date_from_minute=date_from_minute,
-            date_to=date_to,
-            date_to_hour=date_to_hour,
-            date_to_minute=date_to_minute,
+    def _build_params_for_range(self, **kwargs):
+        # Общий метод для сборки параметров по диапазону дат
+        return UrlParams(self._default_url, self._builder).set_params(
             filter_set=1,
+            **kwargs,
             data=1
         )
 
-class UrlProvider(SyncPage, PredefinedUrls):
-    def __init__(self, page, default_url=None):
-        super().__init__(page)
-        self._default_url = default_url
-        self.builder = UrlBuilder()
-        PredefinedUrls.__init__(self, self.builder, self._default_url)
+    def get_today(self):
+        today_date = datetime.now().date()
+        start = datetime.combine(today_date, datetime.min.time())
+        end = datetime.combine(today_date, datetime.max.time())
+        range_params = self._get_date_range(start, end)
+        return self._build_params_for_range(**range_params)
 
-    def get_driver_events_url(self, url=None):
-        return self.driver_events(url)
+    def get_yesterday(self):
+        yesterday = datetime.now() - timedelta(days=1)
+        start = datetime.combine(yesterday.date(), datetime.min.time())
+        end = datetime.combine(yesterday.date(), datetime.max.time())
+        range_params = self._get_date_range(start, end)
+        return self._build_params_for_range(**range_params)
 
-    def get_device_type_event_url(self, url=None):
-        return self.device_type_event(url)
+    def recent_events(self):
+        end = datetime.now()
+        start = end - timedelta(days=1)
+        range_params = self._get_date_range(start, end)
+        start_hour = str(int(start.strftime("%H")))
+        start_minute = str(int(start.strftime("%M")))
+        end_hour = end.strftime("%H")
+        end_minute = str(int(end.strftime("%M")))
 
-    def get_default_url(self, url=None):
-        return self.default(url)
+        for key in ['date_from_hour', 'date_from_minute', 'date_to_hour', 'date_to_minute']:
+            range_params.pop(key, None)
 
-    def get_recent_events_url(self, url=None):
-        return self.recent_events(url)
+        return self._build_params_for_range(
+            **range_params,
+            date_from_hour=start_hour,
+            date_from_minute=start_minute,
+            date_to_hour=end_hour,
+            date_to_minute=end_minute
+        )
 
-    def get_today_url(self, url=None):
-        return self.today(url)
+    def get_day_before_yesterday(self):
+        end = datetime.now() - timedelta(days=2)
+        start = end
+        range_params = self._get_date_range(start, end)
+        return self._build_params_for_range(**range_params)
 
-    def get_yesterday_url(self, url=None):
-        return self.yesterday(url)
+    def get_current_week(self):
+        today = datetime.now()
+        start_of_week = today - timedelta(days=today.weekday())  # Понедельник
+        start = datetime.combine(start_of_week.date(), datetime.min.time())
+        end = datetime.now()
+        range_params = self._get_date_range(start, end)
+        return self._build_params_for_range(**range_params)
 
-    def get_day_before_yesterday_url(self, url=None):
-        return self.day_before_yesterday(url)
+    def get_previous_week(self):
+        today = datetime.now()
+        start_of_current_week = today - timedelta(days=today.weekday())
+        start_of_prev_week = start_of_current_week - timedelta(days=7)
+        end_of_prev_week = start_of_current_week - timedelta(days=1)
+        start = datetime.combine(start_of_prev_week.date(), datetime.min.time())
+        end = datetime.combine(end_of_prev_week.date(), datetime.max.time())
+        range_params = self._get_date_range(start, end)
+        return self._build_params_for_range(**range_params)
 
-    def get_current_week_url(self, url=None):
-        return self.current_week(url)
+    def get_current_month(self):
+        today = datetime.now()
+        start = today.replace(day=1)
+        end = datetime.now()
+        range_params = self._get_date_range(start, end)
+        return self._build_params_for_range(**range_params)
 
-    def get_previous_week_url(self, url=None):
-        return self.previous_week(url)
+    def get_past_month(self):
+        today = datetime.now()
+        first_day_current_month = today.replace(day=1)
+        last_day_prev_month = first_day_current_month - timedelta(days=1)
+        start_prev_month = last_day_prev_month.replace(day=1)
+        end_prev_month = last_day_prev_month
+        range_params = self._get_date_range(start_prev_month, end_prev_month)
+        return self._build_params_for_range(**range_params)
 
-    def get_current_month_url(self, url=None):
-        return self.current_month(url)
+    def get_current_year(self):
+        today = datetime.now()
+        start_of_year = today.replace(month=1, day=1)
+        end = today
+        range_params = self._get_date_range(start_of_year, end)
+        return self._build_params_for_range(**range_params)
 
-    def get_past_month_url(self, url=None):
-        return self.past_month(url)
+    def get_past_year(self):
+        today = datetime.now()
+        start_of_current_year = today.replace(month=1, day=1)
+        start_prev_year = start_of_current_year.replace(year=start_of_current_year.year - 1)
+        end_prev_year = start_of_current_year - timedelta(days=1)
+        range_params = self._get_date_range(start_prev_year, end_prev_year)
+        return self._build_params_for_range(**range_params)
 
-    def get_current_year_url(self, url=None):
-        return self.current_year(url)
+# Пример использования
+default_url = "https://example/event"
+url_provider = UrlProvider(default_url)
 
-    def get_past_year_url(self, url=None):
-        return self.past_year(url)
+# # Получить текущий неделя
+# url = url_provider.get_current_week().set_params(
+#     type_list=[17, 40, 26, 27, 46, 38, 4, 28, 25],
+#     data=2
+# ).build()
+#
+# print(url)
+
+print("Сутки:", url_provider.recent_events().set_params(type_list=[17, 40], data=2).build())
+print("Сегодня:", url_provider.get_today().set_params(type_list=[17, 40], data=2).build())
+print("Вчера:", url_provider.get_yesterday().set_params(type_list=[17], data=1).build())
+print("Текущая неделя:", url_provider.get_current_week().set_params(type_list=[26]).build())
+print("Прошлая неделя:", url_provider.get_previous_week().set_params(type_list=[27]).build())
+print("Текущий месяц:", url_provider.get_current_month().set_params(type_list=[46]).build())
+print("Прошлый месяц:", url_provider.get_past_month().set_params(type_list=[38]).build())
+print("Текущий год:", url_provider.get_current_year().set_params(type_list=[4]).build())
+print("Прошлый год:", url_provider.get_past_year().set_params(type_list=[28]).build())

@@ -3,7 +3,9 @@ import os
 from datetime import datetime
 
 # Папка для хранения логов
-LOG_DIR = r"C:\Users\me\Documents\noname_v3"
+current_dir = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(current_dir, '..'))
+LOG_DIR = PROJECT_ROOT
 os.makedirs(LOG_DIR, exist_ok=True)
 
 

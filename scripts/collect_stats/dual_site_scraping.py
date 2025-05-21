@@ -39,13 +39,13 @@ async def main():
     login_tasks = [
         perform_login(
             login_page1,
-            STG.MGT['host'],
+            STG.MGT['url'],
             STG.MGT['login'],
             STG.MGT['password']
         ),
         perform_login(
             login_page2,
-            STG.PILLIGRIMM['host'],
+            STG.PILLIGRIMM['url'],
             STG.PILLIGRIMM['login'],
             STG.PILLIGRIMM['password']
         )
@@ -77,7 +77,7 @@ async def main():
     await device_page2.press_download()
 
     # Можно оставить паузу, если нужно
-    await asyncio.sleep(15)
+    # await asyncio.sleep(15)
 
     # Закрытие браузеров
     await browser1.close()

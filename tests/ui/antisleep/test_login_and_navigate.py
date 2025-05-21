@@ -37,8 +37,9 @@ def test_login_and_navigate(page):
 @pytest.mark.asyncio
 async def test_login_and_navigate_async():
     async with async_playwright() as playwright:
-        browser = await playwright.chromium.launch(headless=False)
+        browser = await playwright.chromium.launch(headless=True)
         page = await browser.new_page()
+        # logger = await setup_logging(page)
 
         login_page = LoginPageAsync(page)
         main_page = MainPageAsync(page)

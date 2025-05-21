@@ -19,7 +19,7 @@ def browser(playwright, request):
     headless = request.config.getoption("--headless")
     match browser_name:
         case 'chromium':
-            browser = playwright.chromium.launch(headless=headless)
+            browser = playwright.chromium.launch(headless=True)
         case 'firefox':
             browser = playwright.firefox.launch(headless=headless)
         case _:
@@ -94,3 +94,5 @@ async def page_async(context_async):
     page = await context_async.new_page()
     yield page
     await page.close()
+
+
