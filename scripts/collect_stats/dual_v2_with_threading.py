@@ -6,6 +6,9 @@ from pages.device_page import DevicePage
 from settings import STG
 from utils.url_customizer import UrlProvider
 
+PILLI_EVENT_TYPES = [17, 61, 40, 26, 27, 46, 38, 4, 28, 25]
+MGT_EVENT_TYPES = [17, 40, 26, 27, 46, 38, 4, 28, 2]
+
 def run_browser_session(url, login, password):
     # Эта функция запускается в отдельном потоке
     with sync_playwright() as p:
@@ -17,15 +20,14 @@ def run_browser_session(url, login, password):
         login_page = LoginPage(page)
         main_page = MainPage(page)
         device_page = DevicePage(page)
-        # url_provider = UrlProvider(page, url)
+        # url_modified = UrlProvider(url+'/event').recent_events().set_params(type_list=PILLI_EVENT_TYPES,).build()
 
         # Выполняем последовательность действий синхронно
         run_pages_sequence(url, login, password, login_page, main_page, device_page)
 
 
 def run_pages_sequence(url, login, password, login_page, main_page, device_page):
-    # a = url_provider.device_type_event()
-    login_page.open_page(url)
+    login_page.open_page(url) # TODO входить используя куки (как формировать куки?)
     login_page.verify_language()
     login_page.enter_email(login)
     login_page.enter_password(password)

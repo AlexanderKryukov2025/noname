@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 class UrlBuilder:
     def build_event_url(
         self,
-        base_url="https://.../event",
+        base_url="https://.../event?",
         date_from=None,
         date_to=None,
         date_from_hour=None,
@@ -87,12 +87,12 @@ class UrlProvider:
             'date_from_minute': 00,
             'date_to_hour': 23,
             'date_to_minute': 59,
-
-            # 'date_from_hour': str(int(start_date.strftime("%H"))),
-            # 'date_from_minute': str(int(start_date.strftime("%M"))),
-            # 'date_to_hour': end_date.strftime("%H"),
-            # 'date_to_minute': str(int(end_date.strftime("%M"))),
         }
+
+    def build(self, url=None):
+        if url:
+            self._current_url = url
+        return self._current_url
 
     def _build_params_for_range(self, **kwargs):
         # Общий метод для сборки параметров по диапазону дат
