@@ -16,7 +16,7 @@ def test_login_and_navigate(page):
     login_page = LoginPage(page)
     main_page = MainPage(page)
     device_page = DevicePage(page)
-    login_page.open_page(STG.ANTISLEEP['host'])
+    login_page.open_page(STG.ANTISLEEP['url'])
     login_page.verify_language()
     login_page.enter_email(STG.ANTISLEEP['login'])
     login_page.enter_password(STG.ANTISLEEP['password'])
@@ -44,7 +44,7 @@ async def test_login_and_navigate_async():
         main_page = MainPageAsync(page)
         device_page = DevicePageAsync(page)
 
-        await login_page.open_page(STG.ANTISLEEP['host'])
+        await login_page.open_page(STG.ANTISLEEP['url'])
         await login_page.verify_language()
         await login_page.enter_email(STG.ANTISLEEP['login'])
         await login_page.enter_password(STG.ANTISLEEP['password'])

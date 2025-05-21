@@ -4,9 +4,9 @@ from pages.login_page import LoginPage
 from pages.main_page import MainPage
 from pages.device_page import DevicePage
 from settings import STG
+from utils.url_customizer import UrlProvider
 
-
-def run_browser_session(host, login, password):
+def run_browser_session(url, login, password):
     # Эта функция запускается в отдельном потоке
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
@@ -17,13 +17,15 @@ def run_browser_session(host, login, password):
         login_page = LoginPage(page)
         main_page = MainPage(page)
         device_page = DevicePage(page)
+        url_provider = UrlProvider(page, url)
 
         # Выполняем последовательность действий синхронно
-        run_pages_sequence(host, login, password, login_page, main_page, device_page)
+        run_pages_sequence(url, login, password, login_page, main_page, device_page, url_provider)
 
 
-def run_pages_sequence(host, login, password, login_page, main_page, device_page):
-    login_page.open_page(host)
+def run_pages_sequence(url, login, password, login_page, main_page, device_page, url_provider):
+    a = url_provider.get_driver_events_url()
+    login_page.open_page(url)
     login_page.verify_language()
     login_page.enter_email(login)
     login_page.enter_password(password)
@@ -41,8 +43,8 @@ def run_pages_sequence(host, login, password, login_page, main_page, device_page
 def main():
     # Данные для двух браузеров
     session_params = [
-        (STG.MGT['host'], STG.MGT['login'], STG.MGT['password']),
-        (STG.PILLIGRIMM['host'], STG.PILLIGRIMM['login'], STG.PILLIGRIMM['password'])
+        (STG.MGT['url'], STG.MGT['login'], STG.MGT['password']),
+        (STG.PILLIGRIMM['url'], STG.PILLIGRIMM['login'], STG.PILLIGRIMM['password'])
     ]
 
     threads = []

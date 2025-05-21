@@ -7,7 +7,7 @@ from settings import STG
 class UserSettings:
 
     def __init__(self):
-        self.host = STG.ANTISLEEP['host']
+        self.host = STG.ANTISLEEP['url']
 
     @allure.step('Отправка запроса put /login')
     def put_settings(self, token, params, check_ok=True):

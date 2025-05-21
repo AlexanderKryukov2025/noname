@@ -7,7 +7,7 @@ from settings import STG
 class Login:
 
     def __init__(self):
-        self.host = STG.ANTISLEEP['host']
+        self.host = STG.ANTISLEEP['url']
 
     @allure.step('Отправка запроса post /login')
     def post_login(self, params, check_ok=True):

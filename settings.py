@@ -1,7 +1,7 @@
 class STG:
-    ANTISLEEP = {'host': 'https://stage-mgt.antisleep.ru', 'login': 'demo@demo.ru', 'password': 'Demo1704@demo.ru'}
-    PILLIGRIMM = {'host': 'https://cm.piligrimm.tech', 'login': 'a.krukov@antisleep.ru', 'password': 'Kryukov1988.'}
-    MGT = {'host': 'https://mgt2020.antisleep.ru', 'login': 'a.krukov@antisleep.ru', 'password': 'Kryukov1988.'}
+    ANTISLEEP = {'url': 'https://stage-mgt.antisleep.ru', 'login': 'demo@demo.ru', 'password': 'Demo1704@demo.ru'}
+    PILLIGRIMM = {'url': 'https://cm.piligrimm.tech', 'login': 'a.krukov@antisleep.ru', 'password': 'Kryukov1988.'}
+    MGT = {'url': 'https://mgt2020.antisleep.ru', 'login': 'a.krukov@antisleep.ru', 'password': 'Kryukov1988.'}
 
 
 class BROWSER:
