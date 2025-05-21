@@ -1,20 +1,38 @@
 import allure
 
-from .base_page import BasePage
+from pages.sync_page import SyncPage
+from pages.async_page import AsyncPage
 from locators import Locators
 
 
-class MainPage(BasePage):
+class MainPage(SyncPage):
 
     def __init__(self, page, loc=Locators()):
         super().__init__(page)
-        self.page = page
-        self.login_loc = loc("main")
+        self.main_loc = loc("main")
 
-    @allure.step("Проверить загрузку главной страницы")
+    @allure.step("Проверка загрузки главной страницы")
     def check_landing(self):
-        self.wait_for_url('/client-113')
+        self.wait_for_element_visible(self.main_loc['logout_btn'])
 
     @allure.step("Навигация к устройствам")
     def navigate_to_devices(self):
-        self.click_element_with_text(self.login_loc['tab_links'], 'Devices')
+        self.click_element_with_text(self.main_loc['tab_links'], self.locale.get('devices'))
+
+
+class MainPageAsync(AsyncPage):
+    def __init__(self, page, loc=Locators()):
+        super().__init__(page)
+        self.main_loc = loc("main")
+
+    @allure.step("Проверка загрузки главной страницы")
+    async def check_landing(self):
+        await self.wait_for_element_visible(self.main_loc['logout_btn'])
+
+    @allure.step("Навигация к устройствам")
+    async def navigate_to_devices(self):
+        await self.click_element_with_text(self.main_loc['tab_links'], self.locale.get('devices'))
+
+    @allure.step("Проверка локализации")
+    async def check_lang(self):
+        return await self.get_element_text(self.main_loc['lang'])

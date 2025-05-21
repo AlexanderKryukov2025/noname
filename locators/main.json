@@ -1,3 +1,5 @@
 {
-    "tab_links": ".navbar-nav li a"
+    "tab_links": ".navbar-nav li a",
+    "lang": ".fixed-top .navbar-right .nav-item.dropdown:last-child a",
+    "logout_btn": "nav a[title=\"Exit\"]"
 }
