@@ -9,11 +9,11 @@ class TestLogin:
     @allure.title("Тест с корректным email и паролем")
     @allure.tag("positive")
     def test_login_with_valid_input(self, cluster):
-        payload = {
+        params = {
             "email": "demo@demo.ru",
             "password": "Demo1704@demo.ru"
         }
-        response = cluster.login.post_login(params=payload)
+        response = cluster.login.post_login(params=params)
         token = response.json()['token']
         assert response.status_code == 200
         assert type(token) == str and token != ''
@@ -21,11 +21,11 @@ class TestLogin:
     @allure.title("Тест с незначительными пробелами перед email и паролем")
     @allure.tag("positive")
     def test_login_with_trimmed_input(self, cluster):
-        payload = {
+        params = {
             "email": " demo@demo.ru ",
             "password": " Demo1704@demo.ru "
         }
-        response = cluster.login.post_login(params=payload)
+        response = cluster.login.post_login(params=params)
         assert response.status_code == 200
 
     @allure.title("Тест с некорректным email")
@@ -42,14 +42,42 @@ class TestLogin:
         # ... перечислить тоже самое с паролем
     ])
     def test_login_invalid_email_format(self, cluster, email, password):
-        payload = {
+        params = {
             "email": email,
             "password": password
         }
-        response = cluster.login.post_login(params=payload, check_ok=False)
+        response = cluster.login.post_login(params=params, check_ok=False)
         assert response.status_code in (401, 422)
         assert response.json()['message'] in (
             'Неверное имя пользователя или пароль.',
             'The email must be a valid email address.',
             'email обязательно к заполнению.',
             'password обязательно к заполнению.')
+
+
+
+    # @allure.title("Тест с корректным email и паролем")
+    # @allure.tag("positive")
+    # def test_123(self, cluster):
+    #     payload = {
+    #         "email": "a.krukov@antisleep.ru",
+    #         "password": "Kryukov1988.",
+    #     }
+    #     token = cluster.login.post_login(params=payload).decoded_body['token']
+    #     token_target = token.split('.')[1]
+    #     payload = {
+    #         "email": "a.krukov@antisleep.ru",
+    #         "password": "Kryukov1988.",
+    #         "_token": "txAXfudxIf3m3Ajb2dFlTmOUfLJ0KN9zrI3qUyLH",
+    #         "action": "logon",
+    #         "back": "/"
+    #     }
+    #     cookie = {f'XSRF-TOKEN={token_target}'}
+    #     params = {"language": "ru"}
+    #     from settings import STG
+    #     cluster.login.host = STG.MGT['url']
+    #     # response = cluster.login.post_login_v2(params=params, payload=payload, cookie=cookie)
+    #     response = cluster.login.post_login_v2(params=params, payload=payload)
+    #     token = response.json()['token']
+    #     assert response.status_code == 200
+    #     assert type(token) == str and token != ''

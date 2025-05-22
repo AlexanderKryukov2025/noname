@@ -3,17 +3,19 @@ import allure
 from core.api_request import ApiRequest
 from settings import STG
 
+API_PREFIX = "/api/v1.00/public"
+
 
 class UserSettings:
 
     def __init__(self):
         self.host = STG.ANTISLEEP['url']
 
-    @allure.step('Отправка запроса put /login')
+    @allure.step('Отправка запроса PUT /login')
     def put_settings(self, token, params, check_ok=True):
-        with allure.step(f'PUT-запрос на {self.host}/api/v1.00/public/user/settings'):
+        with allure.step(f'PUT-запрос на {self.host}{API_PREFIX}/user/settings'):
             response = ApiRequest(
-                url='/api/v1.00/public/user/settings',
+                url=API_PREFIX + '/user/settings',
                 service_url=self.host,
                 method='PUT',
                 params=params,

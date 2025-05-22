@@ -191,24 +191,16 @@ class UrlProvider:
         range_params = self._get_date_range(start_prev_year, end_prev_year)
         return self._build_params_for_range(**range_params)
 
-# Пример использования
-default_url = "https://example/event"
-url_provider = UrlProvider(default_url)
-
-# # Получить текущий неделя
-# url = url_provider.get_current_week().set_params(
-#     type_list=[17, 40, 26, 27, 46, 38, 4, 28, 25],
-#     data=2
-# ).build()
+# # Пример использования
+# default_url = "https://example/event"
+# url_provider = UrlProvider(default_url)
 #
-# print(url)
-
-print("Сутки:", url_provider.recent_events().set_params(type_list=[17, 40], data=2).build())
-print("Сегодня:", url_provider.get_today().set_params(type_list=[17, 40], data=2).build())
-print("Вчера:", url_provider.get_yesterday().set_params(type_list=[17], data=1).build())
-print("Текущая неделя:", url_provider.get_current_week().set_params(type_list=[26]).build())
-print("Прошлая неделя:", url_provider.get_previous_week().set_params(type_list=[27]).build())
-print("Текущий месяц:", url_provider.get_current_month().set_params(type_list=[46]).build())
-print("Прошлый месяц:", url_provider.get_past_month().set_params(type_list=[38]).build())
-print("Текущий год:", url_provider.get_current_year().set_params(type_list=[4]).build())
-print("Прошлый год:", url_provider.get_past_year().set_params(type_list=[28]).build())
+# print("Сутки:", url_provider.recent_events().set_params(type_list=[17, 40], data=2).build())
+# print("Сегодня:", url_provider.get_today().set_params(type_list=[17, 40], data=2).build())
+# print("Вчера:", url_provider.get_yesterday().set_params(type_list=[17], data=1).build())
+# print("Текущая неделя:", url_provider.get_current_week().set_params(type_list=[26]).build())
+# print("Прошлая неделя:", url_provider.get_previous_week().set_params(type_list=[27]).build())
+# print("Текущий месяц:", url_provider.get_current_month().set_params(type_list=[46]).build())
+# print("Прошлый месяц:", url_provider.get_past_month().set_params(type_list=[38]).build())
+# print("Текущий год:", url_provider.get_current_year().set_params(type_list=[4]).build())
+# print("Прошлый год:", url_provider.get_past_year().set_params(type_list=[28]).build())

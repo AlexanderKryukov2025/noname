@@ -6,8 +6,8 @@ from settings import STG
 def get_token(cluster):
     try:
         login_params = {
-            "email": STG.ANTISLEEP['login'],
-            "password": STG.ANTISLEEP['password']
+            "email": STG.PILLIGRIMM['login'],
+            "password": STG.PILLIGRIMM['password']
         }
 
         response = cluster.login.post_login(params=login_params)

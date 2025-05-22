@@ -38,7 +38,7 @@ def context(browser, request):
             context = browser.new_context(
                 ignore_https_errors=True,
                 permissions=["clipboard-read", "clipboard-write"],
-                viewport={'width': 1280, 'height': 720}
+                # viewport={'width': 1280, 'height': 720}
                 # record_video_dir="videos/"
             )
         case "firefox":
@@ -82,7 +82,7 @@ async def context_async(browser_async, request):
     context = await browser_async.new_context(
         ignore_https_errors=True,
         permissions=["clipboard-read", "clipboard-write"],
-        viewport={'width': 1280, 'height': 720}
+        # viewport={'width': 1280, 'height': 720}
         # record_video_dir="videos/"
     )
     yield context
