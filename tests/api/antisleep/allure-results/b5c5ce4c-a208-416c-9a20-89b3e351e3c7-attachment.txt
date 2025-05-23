@@ -1,1 +1,0 @@
-{'email': 'demo@demo.ru', 'password': ''}

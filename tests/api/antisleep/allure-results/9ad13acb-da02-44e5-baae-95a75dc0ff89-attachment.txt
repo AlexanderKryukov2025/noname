@@ -1,1 +1,0 @@
-{'name': 'User', 'time_zone': 'Asia/Yakutsk', 'sip_number': '12345', 'sip_extension': '67890', 'events_view_type': None, 'locale': 'en'}
