@@ -110,7 +110,7 @@ class EventReport:
             reverse = (sort_order == 'desc')
             data_list = sorted(data_list, key=get_sort_key, reverse=reverse)
 
-        with open(self.file_path, mode='w', encoding='utf-8', newline='') as file:
+        with open(self.file_path, mode='w', encoding='windows-1251', newline='') as file:
             writer = csv.writer(file, delimiter=';')
             writer.writerow(headers)
 

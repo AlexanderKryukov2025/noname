@@ -1,8 +1,12 @@
 from datetime import datetime, timedelta
+from .base_params import BaseParamsBuilder
 
-class EventsParamsBuilder:
+
+class EventsParamsBuilder(BaseParamsBuilder):
     def __init__(self):
-        self.params = {
+        super().__init__()
+        # Чтобы использовать параметр по умолчанию, задайте ему значение != None, например "page": 1
+        self.params.update({
             "page": 1,
             "filter[client_id]": None,
             "filter[org_struct_lvl1_id]": None,
@@ -22,30 +26,7 @@ class EventsParamsBuilder:
             "filter[speed_not_null]": None,
             "filter[event_id]": None,
             "filter[event_uid]": None
-        }
-
-    def set_param(self, key, value):
-        # Проверка, является ли ключ списком для специальных обработок
-        if isinstance(value, list):
-            # Преобразуем каждый элемент списка в отдельный параметр с индексом
-            for idx, item in enumerate(value):
-                param_key = f"{key}[{idx}]"
-                self.params[param_key] = item
-        else:
-            # Стандартная установка
-            if key in self.params:
-                self.params[key] = value
-        return self
-
-    def set_params(self, params_dict):
-        for key, value in params_dict.items():
-            self.set_param(key, value)
-        return self
-
-    def build(self):
-        # Убираем параметры со значением None
-        filtered_params = {k: v for k, v in self.params.items() if v is not None}
-        return filtered_params
+        })
 
 # Класс для работы с датами
 class EventsDateRangeMethods:
@@ -125,6 +106,7 @@ class EventsDateRangeMethods:
     def _set_date_range(self, start, end):
         self.set_params(self._get_date_range(start, end))
         return self
+
 
 # Класс для фильтров, наследует от builder и методов для дат
 class EventsParams(EventsParamsBuilder, EventsDateRangeMethods):

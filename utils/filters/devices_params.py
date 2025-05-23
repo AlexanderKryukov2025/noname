@@ -8,21 +8,16 @@ class DevicesParamsBuilder(BaseParamsBuilder):
             "filter[client_id]": None,
             "filter[org_struct_lvl1_id]": None,
             "filter[org_struct_lvl2_id]": None,
-            "filter[geofence_id]": None,
+            "filter[serial_number]": None,
             "filter[side_number]": None,
-            "filter[vehicle_id]": None,
-            "filter[device_id]": None,
+            "filter[device_name]": None,
             "filter[device_type]": None,
-            "filter[date_from]": None,
-            "filter[date_to]": None,
-            "filter[type]": None,
-            "filter[driver_uid]": None,
-            "filter[external_driver_id]": None,
-            "filter[operator_id]": None,
-            "filter[verification_status]": None,
-            "filter[speed_not_null]": None,
-            "filter[event_id]": None,
-            "filter[event_uid]": None
+            "filter[status]": None,
+            "filter[version]": None,
+            "filter[online]": None,
+            "filter[offline]": None,
+            "filter[defective]": None,
+            "filter[working]": None
         })
 
 # Пример использования:
