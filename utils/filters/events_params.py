@@ -1,4 +1,3 @@
-import json
 from datetime import datetime, timedelta
 
 class EventsParamsBuilder:
@@ -26,8 +25,16 @@ class EventsParamsBuilder:
         }
 
     def set_param(self, key, value):
-        if key in self.params:
-            self.params[key] = value
+        # Проверка, является ли ключ списком для специальных обработок
+        if isinstance(value, list):
+            # Преобразуем каждый элемент списка в отдельный параметр с индексом
+            for idx, item in enumerate(value):
+                param_key = f"{key}[{idx}]"
+                self.params[param_key] = item
+        else:
+            # Стандартная установка
+            if key in self.params:
+                self.params[key] = value
         return self
 
     def set_params(self, params_dict):
@@ -36,6 +43,7 @@ class EventsParamsBuilder:
         return self
 
     def build(self):
+        # Убираем параметры со значением None
         filtered_params = {k: v for k, v in self.params.items() if v is not None}
         return filtered_params
 
@@ -129,6 +137,12 @@ class EventsParams(EventsParamsBuilder, EventsDateRangeMethods):
     # Методы для установки фильтров
     def set_page_num(self, page_num):
         return self.set_param("page", page_num)
+
+    def set_date_from(self, date_from):
+        return self.set_param("filter[date_from]", date_from)
+
+    def set_date_to(self, date_to):
+        return self.set_param("filter[date_to]", date_to)
 
     def set_client_id(self, client_id):
         return self.set_param("filter[client_id]", client_id)

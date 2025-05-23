@@ -6,7 +6,7 @@ from pages.login_page import LoginPage
 from pages.main_page import MainPage
 from pages.device_page import DevicePage
 from settings import STG
-from utils.api_payloads.events import EventsParams
+from utils.filters.events_params import EventsParams
 from utils.event_report import EventReport
 
 PILLI_EVENT_TYPES = [17, 61, 40, 26, 27, 46, 38, 4, 28, 25]
@@ -59,8 +59,6 @@ def run_browser_session(url, login, password, cluster):
 
 
 def run_pages_sequence(url, login, password, login_page, main_page, device_page, cluster):
-
-
     login_page.open_page(url) # TODO входить используя куки (как формировать куки?)
     login_page.verify_language()
     login_page.enter_email(login)
@@ -78,13 +76,8 @@ def run_pages_sequence(url, login, password, login_page, main_page, device_page,
 
 def main(cluster):
     # Данные для двух браузеров
-    # session_params = [
-    #     (STG.MGT['url'], STG.MGT['login'], STG.MGT['password']),
-    #     (STG.PILLIGRIMM['url'], STG.PILLIGRIMM['login'], STG.PILLIGRIMM['password'])
-    # ]
-
     session_params = [
-        # (STG.MGT['url'], STG.MGT['login'], STG.MGT['password']),
+        (STG.MGT['url'], STG.MGT['login'], STG.MGT['password']),
         (STG.PILLIGRIMM['url'], STG.PILLIGRIMM['login'], STG.PILLIGRIMM['password'])
     ]
 

@@ -1,38 +1,29 @@
-import json
+from .base_params import BaseParamsBuilder
 
-class DevicesParamsBuilder:
+class DevicesParamsBuilder(BaseParamsBuilder):
     def __init__(self):
-        self.params = {
+        super().__init__()
+        self.params.update({
             "page": 1,
             "filter[client_id]": None,
             "filter[org_struct_lvl1_id]": None,
             "filter[org_struct_lvl2_id]": None,
-            "filter[serial_number]": None,
+            "filter[geofence_id]": None,
             "filter[side_number]": None,
-            "filter[device_name]": None,
+            "filter[vehicle_id]": None,
+            "filter[device_id]": None,
             "filter[device_type]": None,
-            "filter[status]": None,
-            "filter[version]": None,
-            "filter[online]": None,
-            "filter[offline]": None,
-            "filter[defective]": None,
-            "filter[working]": None
-        }
-
-    def set_param(self, key, value):
-        if key in self.params:
-            self.params[key] = value
-        return self
-
-    def set_params(self, params_dict):
-        for key, value in params_dict.items():
-            self.set_param(key, value)
-        return self
-
-    def build(self):
-        # Возвращаем только отфильтрованные параметры
-        return {k: v for k, v in self.params.items() if v is not None}
-
+            "filter[date_from]": None,
+            "filter[date_to]": None,
+            "filter[type]": None,
+            "filter[driver_uid]": None,
+            "filter[external_driver_id]": None,
+            "filter[operator_id]": None,
+            "filter[verification_status]": None,
+            "filter[speed_not_null]": None,
+            "filter[event_id]": None,
+            "filter[event_uid]": None
+        })
 
 # Пример использования:
 # builder = DevicesParamsBuilder()
@@ -43,6 +34,9 @@ class DevicesParamsBuilder:
 class DevicesParams(DevicesParamsBuilder):
     def __init__(self):
         super().__init__()
+
+    def set_page_num(self, page_num):
+        return self.set_param("page", page_num)
 
     def set_client_id(self, client_id):
         return self.set_param("filter[client_id]", client_id)
